@@ -59,10 +59,22 @@ class Game:
             if self.queue.empty():
                 continue
             button_number = self.queue.get()
-            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_number-1])
+            button_color = self.randomColor[button_number-1]
 
+            button_pressed1 = self.queue.get()
+            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_pressed1])
+            print(self.randomColor[button_pressed1])
+            print(button_pressed1)
+            button_pressed2 = self.queue.get()
+            print(self.randomColor[button_pressed2])
+            print(button_pressed2)
+
+            
+            if isinstance(button_number, str) and self.randomColor[button_pressed1] == isinstance(button_number, str) and self.randomColor[button_pressed2]:
+                print("matched")
+
+    
             # Example logic: light up the button that was pressed with a constant color
-          
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
             self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
@@ -118,7 +130,6 @@ class Game:
 
 
         for x in range(16):
-            print(x)
             self.randomColor.append(self.colors.pop(random.randrange(len(self.colors))))
 
 
