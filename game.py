@@ -65,10 +65,9 @@ class Game:
             if self.queue.empty():
                 continue
             button_number = self.queue.get()
-            print(f"Handling button {button_number} " + "Color " + self.randomColor[button_number-1])
+            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_number-1])
 
             # Example logic: light up the button that was pressed with a constant color
-          
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
             self.speaker.play_preloaded_wav(self.randomSounds[button_number-1], wait_until_done=True)  # Play a sound when button is pressed
@@ -158,9 +157,7 @@ class Game:
 
         for x in range(16):
             print(x)
-            num = random.randrange(len(self.colors))
-            self.randomColor.append(self.colors.pop(num))
-            self.randomSounds.append(self.sounds.pop(num))
+            self.randomColor.append(self.colors.pop(random.randrange(len(self.colors))))
 
 
     def _start_game(self):
