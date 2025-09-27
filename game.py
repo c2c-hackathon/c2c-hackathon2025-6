@@ -42,6 +42,7 @@ class Game:
         self.buttonFlipFlop = True
         self.button1 = 0
         self.button2 = 1
+        self.in_game_sounds: typing.List[str] =[]
 
     @property
     def correct_sound(self):
@@ -59,7 +60,7 @@ class Game:
     def end_of_game_sound(self):
         """The sound that is played when the game ends."""
         # OPTIONAL: change this to a different sound if you want
-        self.speaker.play_preloaded_wav("slide_whistle_x", wait_until_done = True)
+        self.speaker.play_preloaded_wav("end_of_game", wait_until_done = True)
         return "end_of_game"
 
     def _background_logic_checker(self):
@@ -77,9 +78,9 @@ class Game:
             # print(button_pressed2)
 
             
-             if self.randomColor[self.button1-1] == self.randomColor[self.button1-1]:
+            if self.randomColor[self.button1-1] == self.randomColor[self.button1-1]:
                 print("right")
-             else:
+            else:
                 print("wrong")
 
             # Example logic: light up the button that was pressed with a constant color
@@ -117,6 +118,7 @@ class Game:
             if(self.buttonHeld == 1):
                 print("button 1 held")
                 self.initialize_button_pad()
+                self.speaker.play_preloaded_wav("end_of_game", wait_until_done = True)
             elif(self.buttonHeld == 2):
                 print("button 2 held")
                 for x in range(len(self.randomColor)):
@@ -128,6 +130,7 @@ class Game:
                 time.sleep(5)
                 self.memoryMode = True
                 self.button_pad.clear_button_pad()
+                
 
         self.holding = False 
         
@@ -141,6 +144,11 @@ class Game:
         self.randomSounds = []
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
+        self.in_game_sounds = [
+            "drum_roll2",
+            "end_of_game"
+        ]
+
         self.sounds = [
             "thunder2",
             "fart_z",
@@ -159,6 +167,7 @@ class Game:
             "bloop_x",
             "car_horn_x",
         ]
+
         
         self.colors = [
             "red",
@@ -183,7 +192,6 @@ class Game:
         num = 0
 
         for x in range(16):
-            print(x)
             num = random.randrange(len(self.colors))
             self.randomColor.append(self.colors.pop(num))
             self.randomSounds.append(self.sounds.pop(num))
@@ -194,6 +202,7 @@ class Game:
         self.thread = threading.Thread(target=self._background_logic_checker)
         self.thread.start()
         # TODO: play a sound to start the game
+        self.speaker.play_preloaded_wav("drum_roll2", wait_until_done = True)
         self.started = True
 
     def play(self):
