@@ -64,8 +64,19 @@ class Game:
             time.sleep(0.005)  # Prevents busy-waiting
             if self.queue.empty():
                 continue
-            button_number = self.queue.get()
-            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_number-1])
+                        button_color = self.randomColor[button_number-1]
+
+            button_pressed1 = self.queue.get()
+            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_pressed1])
+            print(self.randomColor[button_pressed1])
+            print(button_pressed1)
+            button_pressed2 = self.queue.get()
+            print(self.randomColor[button_pressed2])
+            print(button_pressed2)
+
+            
+            if isinstance(button_number, str) and self.randomColor[button_pressed1] == isinstance(button_number, str) and self.randomColor[button_pressed2]:
+                print("matched")
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
