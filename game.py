@@ -3,6 +3,7 @@ import queue
 import threading
 import time
 import typing
+import random
 from dataclasses import dataclass
 
 import library
@@ -26,6 +27,7 @@ class Game:
         self.buttons: typing.List[ButtonInfo] = []
         self.sounds: typing.List[str] = []
         self.colors: typing.List[str] = []
+        self.randomColor: typing.List[str] = []
         self.speaker = library.speaker.Speaker()
         self.initialize_button_pad()
         self.started = False
@@ -56,11 +58,11 @@ class Game:
             if self.queue.empty():
                 continue
             button_number = self.queue.get()
-            print(f"Handling button {button_number}")
+            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_number-1])
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
-            self.button_pad.set_button_led_color(button, "red")
+            self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
             self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
@@ -91,7 +93,32 @@ class Game:
             "bloop_x",
             "car_horn_x",
         ]
+        
+        self.colors = [
+            "red",
+            "hotpink",
+            "honeydew",
+            "mintcream",
+            "midnightblue",
+            "orange",
+            "peru",
+            "saddlebrown",
+            "red",
+            "hotpink",
+            "honeydew",
+            "mintcream",
+            "midnightblue",
+            "orange",
+            "peru",
+            "saddlebrown",
+        ]
         # TODO: assign to buttons
+
+
+        for x in range(16):
+            print(x)
+            self.randomColor.append(self.colors.pop(random.randrange(len(self.colors))))
+
 
     def _start_game(self):
         self.thread = threading.Thread(target=self._background_logic_checker)
