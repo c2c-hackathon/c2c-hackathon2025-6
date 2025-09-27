@@ -34,13 +34,13 @@ class Game:
 
     @property
     def correct_sound(self):
-        """The sound that is played when player gets a pair"""
-        # OPTIONAL: change this to a different sound if you want
+        self.speaker.play_preloaded_wav("thunder2", wait_until_done = True)
         return "correct_answer"
 
     @property
     def incorrect_sound(self):
         """The sound that is played when player makes an incorrect guess"""
+        self.speaker.play_preloaded_wav("fart_z", wait_until_done = True)
         # OPTIONAL: change this to a different sound if you want
         return "incorrect"
 
@@ -48,6 +48,7 @@ class Game:
     def end_of_game_sound(self):
         """The sound that is played when the game ends."""
         # OPTIONAL: change this to a different sound if you want
+        self.speaker.play_preloaded_wav("slide_whistle_x", wait_until_done = True)
         return "end_of_game"
 
     def _background_logic_checker(self):
@@ -59,6 +60,7 @@ class Game:
             print(f"Handling button {button_number}")
 
             # Example logic: light up the button that was pressed with a constant color
+          
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, "red")
             self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
