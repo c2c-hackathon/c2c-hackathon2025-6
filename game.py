@@ -32,6 +32,7 @@ class Game:
         self.play_game = True
         self.queue = queue.Queue()
 
+
     @property
     def correct_sound(self):
         self.speaker.play_preloaded_wav("thunder2", wait_until_done = True)
@@ -60,10 +61,12 @@ class Game:
             print(f"Handling button {button_number}")
 
             # Example logic: light up the button that was pressed with a constant color
-          
+            if button_number == button_number + 1:
+              correct_sound()
+        
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, "red")
-            self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
+            self.speaker.play_preloaded_wav("doorbell_x", wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
     def when_pressed(self, button):
@@ -92,6 +95,8 @@ class Game:
             "phone_pay",
             "bloop_x",
             "car_horn_x",
+            "gasp_x",
+            "doorbell_x"
         ]
         # TODO: assign to buttons
 
