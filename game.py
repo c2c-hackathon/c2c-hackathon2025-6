@@ -38,6 +38,7 @@ class Game:
         self.endTime = 0
         self.holding = False
         self.buttonHeld = 0
+        self.memoryMode = False
 
     @property
     def correct_sound(self):
@@ -95,12 +96,21 @@ class Game:
                 print("button 2 held")
                 for x in range(len(self.randomColor)):
                     self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), self.randomColor[x])
+            elif(self.buttonHeld == 3):
+                print("button 3 held")
+                for x in range(len(self.randomColor)):
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), self.randomColor[x])   
+                time.sleep(5)
+                self.memoryMode = True
+                self.button_pad.clear_button_pad()
 
         self.holding = False 
+        
 
 
 
     def initialize_button_pad(self):
+        self.memoryMode = False
         self.button_pad.clear_button_pad()
         self.randomColor = []
         self.randomSounds = []
