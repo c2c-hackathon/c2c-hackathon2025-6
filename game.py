@@ -87,7 +87,10 @@ class Game:
             self.button_pad.set_button_led_color(button, self.randomColor[button.pin.info.number-1])
             self.speaker.play_preloaded_wav(self.randomSounds[button_number-1], wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
-
+            if(self.button1 == self.button2):
+                self.button1 = None
+                self.button2 = None
+                self.button_pad.set_button_led_color(self.button_pad.get_button(self.button2), "black")
             if self.button2 != None and self.button1 != None and self.buttonFlipFlop:
                 if self.randomColor[self.button1-1] == self.randomColor[self.button2-1]:
                     print("right")
@@ -100,7 +103,7 @@ class Game:
                     self.button_pad.set_button_led_color(self.button_pad.get_button(self.button1), self.buttonColor)
                     time.sleep(1)
                     self.button_pad.set_button_led_color(self.button_pad.get_button(self.button2), "black")
-                    # time.sleep(1)
+                    time.sleep(.1)
                     self.button1 = None
                     self.button2 = None
                     if(self.memoryMode):
@@ -150,6 +153,8 @@ class Game:
                 print("button 2 held")
                 for x in range(len(self.randomColor)):
                     self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), self.randomColor[x])
+                self.buttonFlipFlop = True
+                self.button1 = None
             elif(self.buttonHeld == 3):
                 print("button 3 held")
                 for x in range(len(self.randomColor)):
@@ -232,6 +237,7 @@ class Game:
         self.thread = threading.Thread(target=self._background_logic_checker)
         self.thread.start()
         # TODO: play a sound to start the game
+        self._background_logic_checker
         self.speaker.play_preloaded_wav("drum_roll2", wait_until_done = True)
         self.started = True
 
