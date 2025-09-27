@@ -28,11 +28,16 @@ class Game:
         self.sounds: typing.List[str] = []
         self.colors: typing.List[str] = []
         self.randomColor: typing.List[str] = []
+        self.randomSounds: typing.List[str] = []
         self.speaker = library.speaker.Speaker()
         self.initialize_button_pad()
         self.started = False
         self.play_game = True
         self.queue = queue.Queue()
+        self.startTime = 0
+        self.endTime = 0
+        self.holding = False
+        self.buttonHeld = 0
 
     @property
     def correct_sound(self):
@@ -59,25 +64,12 @@ class Game:
             if self.queue.empty():
                 continue
             button_number = self.queue.get()
-            button_color = self.randomColor[button_number-1]
+            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_number-1])
 
-            button_pressed1 = self.queue.get()
-            print(f"Handling button {button_number} " + "Color" + self.randomColor[button_pressed1])
-            print(self.randomColor[button_pressed1])
-            print(button_pressed1)
-            button_pressed2 = self.queue.get()
-            print(self.randomColor[button_pressed2])
-            print(button_pressed2)
-
-            
-            if isinstance(button_number, str) and self.randomColor[button_pressed1] == isinstance(button_number, str) and self.randomColor[button_pressed2]:
-                print("matched")
-
-    
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
-            self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
+            self.speaker.play_preloaded_wav(self.randomSounds[button_number-1], wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
     def when_pressed(self, button):
@@ -87,17 +79,41 @@ class Game:
 
     def when_held(self, button):
         # TODO: this is called when a button is held. Add what you need to here
-        pass
+        print("holding")
+        self.holding = True
+        self.buttonHeld = button.pin.info.number
+        
 
     def when_released(self, button):
-        # TODO: this is called when a button is released. Add what you need to here
-        pass
+        if(self.holding):
+            print("resetting")
+            if(self.buttonHeld == 1):
+                print("button 1 held")
+                self.initialize_button_pad()
+            elif(self.buttonHeld == 2):
+                print("button 2 held")
+                for x in range(len(self.randomColor)):
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), self.randomColor[x])
+
+        self.holding = False 
+
+
 
     def initialize_button_pad(self):
         self.button_pad.clear_button_pad()
+        self.randomColor = []
+        self.randomSounds = []
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
         self.sounds = [
+            "thunder2",
+            "fart_z",
+            "baby_x",
+            "slide_whistle_x",
+            "arrow2",
+            "phone_pay",
+            "bloop_x",
+            "car_horn_x",
             "thunder2",
             "fart_z",
             "baby_x",
@@ -110,26 +126,27 @@ class Game:
         
         self.colors = [
             "red",
-            "hotpink",
-            "honeydew",
-            "mintcream",
-            "midnightblue",
-            "orange",
-            "peru",
-            "saddlebrown",
+            "blue",
+            "green",
+            "yellow",
+            "purple",
+            "deeppink",
+            "white",
+            "cyan",
             "red",
-            "hotpink",
-            "honeydew",
-            "mintcream",
-            "midnightblue",
-            "orange",
-            "peru",
-            "saddlebrown",
+            "blue",
+            "green",
+            "yellow",
+            "purple",
+            "deeppink",
+            "white",
+            "cyan"
         ]
         # TODO: assign to buttons
 
 
         for x in range(16):
+            print(x)
             self.randomColor.append(self.colors.pop(random.randrange(len(self.colors))))
 
 
