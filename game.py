@@ -40,9 +40,11 @@ class Game:
         self.buttonHeld = 0
         self.memoryMode = False
         self.buttonFlipFlop = True
-        self.button1 = 0
-        self.button2 = 1
+        self.button1 = None
+        self.button2 = None
+        self.buttonColor = "black"
         self.in_game_sounds: typing.List[str] =[]
+        self.pairs = 0
 
     @property
     def correct_sound(self):
@@ -77,22 +79,45 @@ class Game:
             # print(self.randomColor[button_pressed2])
             # print(button_pressed2)
 
-            
-            if self.randomColor[self.button1-1] == self.randomColor[self.button1-1]:
-                print("right")
-            else:
-                print("wrong")
+
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
-            self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
+            self.button_pad.set_button_led_color(button, self.buttonColor)
             self.speaker.play_preloaded_wav(self.randomSounds[button_number-1], wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
+
+            if self.button2 != None and self.button1 != None and self.buttonFlipFlop:
+                if self.randomColor[self.button1-1] == self.randomColor[self.button2-1]:
+                    print("right")
+                    self.speaker.play_preloaded_wav("correct_answer", wait_until_done = True)
+                    self.pairs += 1
+                else:
+                    print("wrong")
+                    self.speaker.play_preloaded_wav("incorrect", wait_until_done = True)
+                    self.buttonColor = "black"
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(self.button1), self.buttonColor)
+                    time.sleep(1)
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(self.button2), "black")
+                    time.sleep(1)
+                    self.button1 = None
+                    self.button2 = None
+                    if(self.memoryMode):
+                        for x in range(len(self.randomColor)):
+                            self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), "red")
+            if(self.pairs >= 8):
+                for x in range(len(self.randomColor)):
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), "green") 
+                    self.speaker.play_preloaded_wav("gasp_x", wait_until_done = True)
+
+
+
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
         _logger.info(f"Button {button.pin.info.number} pressed")
         self.queue.put(button.pin.info.number)
+        self.buttonColor = self.randomColor[button.pin.info.number-1]
         if(self.buttonFlipFlop):
             self.button1 = button.pin.info.number
             print("button1: " + str(self.button1))
@@ -118,6 +143,8 @@ class Game:
             if(self.buttonHeld == 1):
                 print("button 1 held")
                 self.initialize_button_pad()
+                self.buttonFlipFlop = True
+                self.button1 = None
                 self.speaker.play_preloaded_wav("end_of_game", wait_until_done = True)
             elif(self.buttonHeld == 2):
                 print("button 2 held")
@@ -129,6 +156,8 @@ class Game:
                     self.button_pad.set_button_led_color(self.button_pad.get_button(x+1), self.randomColor[x])   
                 time.sleep(5)
                 self.memoryMode = True
+                self.buttonFlipFlop = True
+                self.button1 = None
                 self.button_pad.clear_button_pad()
                 
 
@@ -138,6 +167,7 @@ class Game:
 
 
     def initialize_button_pad(self):
+        self.pairs = 0
         self.memoryMode = False
         self.button_pad.clear_button_pad()
         self.randomColor = []
