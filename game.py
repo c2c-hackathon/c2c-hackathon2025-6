@@ -40,8 +40,9 @@ class Game:
         self.buttonHeld = 0
         self.memoryMode = False
         self.buttonFlipFlop = True
-        self.button1 = 0
-        self.button2 = 1
+        self.button1 = None
+        self.button2 = None
+        self.buttonColor = "black"
 
     @property
     def correct_sound(self):
@@ -76,22 +77,34 @@ class Game:
             # print(self.randomColor[button_pressed2])
             # print(button_pressed2)
 
-            
-             if self.randomColor[self.button1-1] == self.randomColor[self.button1-1]:
-                print("right")
-             else:
-                print("wrong")
+
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
-            self.button_pad.set_button_led_color(button, self.randomColor[button_number-1])
+            self.button_pad.set_button_led_color(button, self.buttonColor)
             self.speaker.play_preloaded_wav(self.randomSounds[button_number-1], wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
+
+            if self.button2 != None and self.buttonFlipFlop:
+                if self.randomColor[self.button1-1] == self.randomColor[self.button2-1]:
+                    print("right")
+                    correct_sound()
+                else:
+                    print("wrong")
+                    incorrect_sound()
+                    self.buttonColor = "black"
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(self.button1), self.buttonColor)
+                    time.sleep(1)
+                    self.button_pad.set_button_led_color(self.button_pad.get_button(self.button2), "black")
+                    time.sleep(1)
+                    self.button1 = None
+                    self.button2 = None
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
         _logger.info(f"Button {button.pin.info.number} pressed")
         self.queue.put(button.pin.info.number)
+        self.buttonColor = self.randomColor[button.pin.info.number-1]
         if(self.buttonFlipFlop):
             self.button1 = button.pin.info.number
             print("button1: " + str(self.button1))
